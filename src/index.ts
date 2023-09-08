@@ -10,6 +10,18 @@ const app = new Elysia()
       await prisma.user.create({ data: { id: body.id, name: body.name } }),
     { body: t.Object({ id: t.String(), name: t.String() }) }
   )
+  .get(
+    "/events/:id",
+    ({ params: { id } }) =>
+      prisma.event.findFirstOrThrow({ where: { id: id } }),
+    {
+      params: t.Object({ id: t.Number() }),
+      transform({ params }) {
+        const id = parseInt(params.id + "");
+        if (!Number.isNaN(id)) params.id = id;
+      },
+    }
+  )
   .post("/events", ({ body }) => prisma.event.create({ data: body }), {
     body: t.Object({
       name: t.String(),
@@ -34,6 +46,17 @@ const app = new Elysia()
         rsvp: t.String(),
         ownerId: t.String(),
       }),
+      transform({ params }) {
+        const id = parseInt(params.id + "");
+        if (!Number.isNaN(id)) params.id = id;
+      },
+    }
+  )
+  .delete(
+    "/events/:id",
+    ({ params: { id } }) => prisma.event.delete({ where: { id: id } }),
+    {
+      params: t.Object({ id: t.Number() }),
       transform({ params }) {
         const id = parseInt(params.id + "");
         if (!Number.isNaN(id)) params.id = id;
