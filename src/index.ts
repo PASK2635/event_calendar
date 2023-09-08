@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const app = new Elysia()
-  .post("/user", ({ body }) =>
+  .post("/users", ({ body }) =>
     prisma.user.create({ data: { id: body.id, name: body.name } })
   )
   .listen(3000);
