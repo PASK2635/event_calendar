@@ -17,8 +17,11 @@ const app = new Elysia()
   })
   .post(
     "/users",
-    async ({ body }) =>
-      await prisma.user.create({ data: { id: body.id, name: body.name } }),
+    async ({ body }) => {
+      const exists = (await prisma.user.count({ where: { id: body.id } })) > 0;
+      if (exists) return body;
+      return await prisma.user.create({ data: body });
+    },
     { body: "user" }
   )
   .get(
