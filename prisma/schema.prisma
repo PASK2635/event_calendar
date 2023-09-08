@@ -17,13 +17,28 @@ model Event {
   start String
   end String?
   rsvp String?
-  //participants User[]
-  owner User @relation(fields: [ownerid], references: [id])
-  ownerid String
+  participants EventParticipants[]
+  owner User @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  @@index([id])
+}
+
+model EventParticipants {
+  event Event @relation(fields: [eventId], references: [id])
+  eventId Int
+  user User @relation(fields: [userId], references: [id])
+  userId String
+
+  @@id([eventId, userId])
+  @@index([eventId, userId])
 }
 
 model User {
   name String
-  id String @unique
-  ownedevents Event[]
+  id String @id
+  ownedEvents Event[]
+  joinedEvents EventParticipants[]
+
+  @@index([id])
 }
