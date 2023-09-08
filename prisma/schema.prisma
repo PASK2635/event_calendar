@@ -14,9 +14,9 @@ model Event {
   id    Int     @id @default(autoincrement())
   name String  @unique
   description  String?
-  start String
-  end String?
-  rsvp String?
+  start DateTime
+  end DateTime?
+  rsvp DateTime?
   participants EventParticipants[]
   owner User @relation(fields: [ownerId], references: [id])
   ownerId String
