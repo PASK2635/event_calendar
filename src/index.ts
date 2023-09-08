@@ -20,6 +20,26 @@ const app = new Elysia()
       ownerId: t.String(),
     }),
   })
+  .put(
+    "/events/:id",
+    ({ params: { id }, body }) =>
+      prisma.event.update({ where: { id: id }, data: body }),
+    {
+      params: t.Object({ id: t.Number() }),
+      body: t.Object({
+        name: t.String(),
+        description: t.String(),
+        start: t.String(),
+        end: t.String(),
+        rsvp: t.String(),
+        ownerId: t.String(),
+      }),
+      transform({ params }) {
+        const id = parseInt(params.id + "");
+        if (!Number.isNaN(id)) params.id = id;
+      },
+    }
+  )
   .listen(3000);
 
 /*
