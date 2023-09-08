@@ -63,6 +63,34 @@ const app = new Elysia()
       },
     }
   )
+  .put(
+    "/events/:id/toggleJoin",
+    async ({ params: { id }, body }) => {
+      const hasJoined =
+        (await prisma.eventParticipants.count({
+          where: { eventId: id, userId: body.userId },
+        })) > 0;
+
+      if (hasJoined) {
+        await prisma.eventParticipants.deleteMany({
+          where: { eventId: id, userId: body.userId },
+        });
+        return;
+      }
+
+      await prisma.eventParticipants.create({
+        data: { eventId: id, userId: body.userId },
+      });
+    },
+    {
+      params: t.Object({ id: t.Number() }),
+      body: t.Object({ userId: t.String() }),
+      transform({ params }) {
+        const id = parseInt(params.id + "");
+        if (!Number.isNaN(id)) params.id = id;
+      },
+    }
+  )
   .listen(3000);
 
 /*
