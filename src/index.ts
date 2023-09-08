@@ -8,9 +8,9 @@ const app = new Elysia()
     event: t.Object({
       name: t.String(),
       description: t.String(),
-      start: t.Date(),
-      end: t.Union([t.Null(), t.Date()]),
-      rsvp: t.Union([t.Null(), t.Date()]),
+      start: t.String(),
+      end: t.Union([t.Null(), t.String()]),
+      rsvp: t.Union([t.Null(), t.String()]),
       ownerId: t.String(),
     }),
     user: t.Object({ id: t.String(), name: t.String() }),
