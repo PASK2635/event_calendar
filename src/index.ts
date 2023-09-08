@@ -13,12 +13,13 @@ const app = new Elysia()
       rsvp: t.Union([t.Null(), t.String()]),
       ownerId: t.String(),
     }),
-    user: t.Object({ id: t.String(), name: t.String() }),
+    user: t.Object({ name: t.String() }),
   })
   .post(
     "/users",
     async ({ body }) => {
-      const exists = (await prisma.user.count({ where: { id: body.id } })) > 0;
+      const exists =
+        (await prisma.user.count({ where: { name: body.name } })) > 0;
       if (exists) return body;
       return await prisma.user.create({ data: body });
     },

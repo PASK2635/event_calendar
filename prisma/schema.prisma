@@ -18,7 +18,7 @@ model Event {
   end String?
   rsvp String?
   participants EventParticipants[]
-  owner User @relation(fields: [ownerId], references: [id])
+  owner User @relation(fields: [ownerId], references: [name])
   ownerId String
 
   @@index([id])
@@ -27,7 +27,7 @@ model Event {
 model EventParticipants {
   event Event @relation(fields: [eventId], references: [id])
   eventId Int
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [name])
   userId String
 
   @@id([eventId, userId])
@@ -35,10 +35,9 @@ model EventParticipants {
 }
 
 model User {
-  name String
-  id String @id
+  name String @id
   ownedEvents Event[]
   joinedEvents EventParticipants[]
 
-  @@index([id])
+  @@index([name])
 }
