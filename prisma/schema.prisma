@@ -9,3 +9,21 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model Event {
+  id    Int     @id @default(autoincrement())
+  name String  @unique
+  description  String?
+  start String
+  end String?
+  rsvp String?
+  //participants User[]
+  owner User @relation(fields: [ownerid], references: [id])
+  ownerid String
+}
+
+model User {
+  name String
+  id String @unique
+  ownedevents Event[]
+}
