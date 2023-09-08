@@ -65,7 +65,7 @@ const app = new Elysia()
     }
   )
   .put(
-    "/events/:id/toggleJoin",
+    "/events/:id/toggle-join",
     async ({ params: { id }, body }) => {
       const hasJoined =
         (await prisma.eventParticipants.count({
@@ -86,6 +86,44 @@ const app = new Elysia()
     {
       params: t.Object({ id: t.Number() }),
       body: t.Object({ userId: t.String() }),
+      transform({ params }) {
+        const id = parseInt(params.id + "");
+        if (!Number.isNaN(id)) params.id = id;
+      },
+    }
+  )
+  .get(
+    "/events/:id/slack-message",
+    async ({ params }) => {
+      const event = await prisma.event.findFirstOrThrow({
+        where: { id: params.id },
+      });
+
+      const openAiResponse = await fetch(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${process.env.OPENAI_TOKEN}`,
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [
+              {
+                role: "user",
+                content: `The following is a danish description for an event. Please write a danish motivational slack message containing a lot of emojis etc. so people want to join. \\n ${event.description}`,
+              },
+            ],
+          }),
+        }
+      );
+
+      return (await openAiResponse.json()).choices[0].message.content;
+    },
+    {
+      params: t.Object({ id: t.Number() }),
       transform({ params }) {
         const id = parseInt(params.id + "");
         if (!Number.isNaN(id)) params.id = id;
